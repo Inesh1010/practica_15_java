@@ -6,14 +6,14 @@ import java.util.List;
 public class Main {
 
     public static <E> List<E> asList(E[] a) {
-        return new MyCollection<E>(a);
+        return new OwnArray<E>(a);
     }
 
-    public static class MyCollection<E> extends AbstractList<E> {
+    public static class OwnArray<E> extends AbstractList<E> {
 
         private final E[] a;
 
-        MyCollection(E[] array) {
+        OwnArray(E[] array) {
             a = array;
         }
 
@@ -34,86 +34,67 @@ public class Main {
 
     public static void main(String[] args) {
 
-        ArrayList<Student> studentsAL = new ArrayList<>();
-        LinkedList<Student> studentsLL = new LinkedList<>();
+        ArrayList<Student> studentsArList = new ArrayList<>();
+        LinkedList<Student> studentsLinkList = new LinkedList<>();
 
         for (int i = 0; i < 10000000; ++i) {
-            studentsAL.add(new Student(42));
-            studentsLL.add(new Student(64));
+            studentsArList.add(new Student(33));
+            studentsLinkList.add(new Student(45));
         }
 
-        System.out.println("======== ACCESS TIME =========");
 
-        long timeStart = System.currentTimeMillis();
-        Student student = studentsAL.get(9777657);
-        long timeFinish = System.currentTimeMillis();
+        long t0 = System.currentTimeMillis();
+        Student student = studentsArList.get(8987426);
+        long t1 = System.currentTimeMillis();
 
-        long timeAL = timeFinish - timeStart;
+        long timeArList = t1 - t0;
 
 
-        timeStart = System.currentTimeMillis();
-        student = studentsLL.get(9777657);
-        timeFinish = System.currentTimeMillis();
+        t0 = System.currentTimeMillis();
+        student = studentsLinkList.get(8987426);
+        t1 = System.currentTimeMillis();
 
-        long timeLL = timeFinish - timeStart;
+        long timeLinkList = t1 - t0;
 
-        System.out.println("ARRAY LIST: " + timeAL);
-        System.out.println("LINKED LIST: " + timeLL);
+        System.out.println("ArrayList: " + timeArList);
+        System.out.println("LinkedList: " + timeLinkList);
 
-        // Доступ к произвольному элементу по индексу для связного списка требует больше времени,
-        // т.к. для получения значения элемента с индексом i нужно пройти все элементы предшествующие i,
-        // то есть доступ по индексу осуществляется за линейное время.
-        // Исключениями являются первый и последний элемент, к ним доступ осуществляется за константное время.
 
-        // В обычном массиве доступ по индексу осуществляется за константное время.
+        student = new Student(43);
 
-        System.out.println("===== INSERTION ======");
+        t0 = System.currentTimeMillis();
+        studentsArList.add(77657, student);
+        t1 = System.currentTimeMillis();
 
-        student = new Student(11);
+        timeArList = t1 - t0;
 
-        timeStart = System.currentTimeMillis();
-        studentsAL.add(77657, student);
-        timeFinish = System.currentTimeMillis();
+        t0 = System.currentTimeMillis();
+        studentsLinkList.add(77657, student);
+        t1 = System.currentTimeMillis();
 
-        timeAL = timeFinish - timeStart;
+        timeLinkList = t1 - t0;
 
-        timeStart = System.currentTimeMillis();
-        studentsLL.add(77657, student);
-        timeFinish = System.currentTimeMillis();
+        System.out.println("ArrayList: " + timeArList);
+        System.out.println("LinkedList: " + timeLinkList);
 
-        timeLL = timeFinish - timeStart;
-
-        System.out.println("ARRAY LIST: " + timeAL);
-        System.out.println("LINKED LIST: " + timeLL);
-
-        // Вставка нового элемента в произвольное место в массиве зависит от того, насколько близко к концу массива
-        // добавляется элемент, так как после вставки нового элемента все элементы правее его сдвигаются.
-        // Чем ближе к концу массива вставляется элемент, тем быстрее осуществляется операция вставки.
-
-        // Вставка нового элемента в произвольное место в связном списке осуществляется за константное время, если
-        // элемент вставляется с правого или левого конца связного списка и за линейное время, если в иное произвольное
-        // место. Это связано с тем, что чтобы добавить новый элемент в позицию i, необходимо пройти сначала до элемента,
-        // с позицией i и добавить ссылку на вставляемый элемент.
 
         Student[] array = new Student[10000000];
 
         for (int i = 0; i < 10000000; ++i) {
-            array[i] = new Student(i+1);
+            array[i] = new Student(i+6);
         }
 
-        MyCollection<Student> studentsMC = new MyCollection<>(array);
+        OwnArray<Student> studentsOA = new OwnArray<>(array);
 
-        System.out.println("===== MY COLLECTION =====");
+        student = studentsOA.get(8987426);
 
-        student = studentsMC.get(9777657);
+        System.out.println("студент 8987426: " + student);
 
-        System.out.println("OLD STUDENT 9777657: " + student);
+        studentsOA.set(8987426, new Student(-23));
 
-        studentsMC.set(9777657, new Student(-10));
+        student = studentsOA.get(8987426);
 
-        student = studentsMC.get(9777657);
-
-        System.out.println("NEW STUDENT 9777657: " + student);
+        System.out.println("студент 8987426: " + student);
 
     }
 
